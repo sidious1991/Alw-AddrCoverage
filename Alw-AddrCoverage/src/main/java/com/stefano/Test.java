@@ -11,7 +11,7 @@ public class Test {
 		
 		java.sql.Connection conn;
 		
-		System.out.println("Hi Stefano!\n");
+		System.out.println("Hi Paolo!\n");
 		
 		try {
 		    /*
