@@ -20,7 +20,7 @@ public class Test {
 			((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
 			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
 
-			String name = "Via Sergio Cataldi";
+			String name = "Ferrovia Roma-Pescara";
 			PreparedStatement s = conn.prepareStatement("select way from planet_osm_line where name = ?");
 			s.setString(1, name);
 			ResultSet r = s.executeQuery();
@@ -31,7 +31,7 @@ public class Test {
 			while (r.next()) {
 
 				street = (PGgeometry) r.getObject(1);
-				rs = GeomLib.getIntersectingLines(street, conn, s);
+				rs = GeomLib.getAdjacentPoints(street, conn, s);
 
 				if(rs!=null) {
 					while(rs.next()) {
