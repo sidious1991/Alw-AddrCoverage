@@ -25,14 +25,18 @@ public class Test {
 		    ((org.postgresql.PGConnection)conn).addDataType("box3d",Class.forName("org.postgis.PGbox3d"));
 		    
 		    Statement s = conn.createStatement();
-		    ResultSet r = s.executeQuery("select name,way from planet_osm_polygon where name is not null");
+		    ResultSet r = s.executeQuery("select name, \"addr:housenumber\", ST_AsText(way) from planet_osm_point where \"addr:housenumber\" is not null");
 		    
 		    while( r.next() ) {
 		      
 		        String name = r.getString(1);
-		        PGgeometry geom_way = (PGgeometry)r.getObject(2);
-		        System.out.println("Name " + name + ":");
-		        System.out.println(geom_way.toString());
+		        String addr = r.getString(2);
+		        String geom_text = r.getString(3);
+		        //PGgeometry geom_way = (PGgeometry)r.getObject(2);
+		        
+		        System.out.println("Name: " + name);
+		        System.out.println("Address: " + addr);
+		        System.out.println("Geom as a text: " + geom_text);
 		    }
 		    
 		    
