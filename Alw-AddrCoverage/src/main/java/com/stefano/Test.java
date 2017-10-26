@@ -11,6 +11,8 @@ public class Test {
 		
 		java.sql.Connection conn;
 		
+		System.out.println("Hi Stefano!\n");
+		
 		try {
 		    /*
 		    * Load the JDBC driver and establish a connection.
