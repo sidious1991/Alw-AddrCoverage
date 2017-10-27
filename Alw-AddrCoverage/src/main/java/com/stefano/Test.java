@@ -20,30 +20,18 @@ public class Test {
 			((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
 			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
 
-			String name = "Ferrovia Roma-Pescara";
-			PreparedStatement s = conn.prepareStatement("select way from planet_osm_line where name = ?");
-			s.setString(1, name);
-			ResultSet r = s.executeQuery();
-			ResultSet rs = null;
-
-			PGgeometry street;
-
-			while (r.next()) {
-
-				street = (PGgeometry) r.getObject(1);
-				rs = GeomLib.getAdjacentPoints(street, conn, s);
-
-				if(rs!=null) {
-					while(rs.next()) {
-						System.out.println(rs.getString(1));
-					}
-				}
-
+			String name = "Via XX Settembre";
+			PreparedStatement s = conn.prepareStatement("");
+			
+			ResultSet rs = GeomLib.getPointsByStreetAddr(name, conn, s);
+			
+			while (rs.next()) {
+				System.out.println(rs.getString(1));
+				System.out.println(rs.getString(4));
 			}
-
+			
 			s.close();
-			conn.close();
-
+			conn.close();	
 		}
 
 		catch (Exception e) {
