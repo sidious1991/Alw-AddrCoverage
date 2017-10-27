@@ -7,11 +7,11 @@ import org.postgis.*;
 public class Point {
 
 	private String name;
-	private Integer osm_id;
+	private long osm_id;
 	private PGgeometry geom;
 	private String housenumber;
 
-	public Point(String name, Integer osm_id, PGgeometry geom, String housenumber) {
+	public Point(String name, long osm_id, PGgeometry geom, String housenumber) {
 		/** Builds a point entity **/
 		this.name = name;
 		this.osm_id = osm_id;
@@ -22,7 +22,7 @@ public class Point {
 	public Point() {
 		/** Default constructor **/
 		this.name = null;
-		this.osm_id = null;
+		this.osm_id = 0;
 		this.geom = null;
 		this.housenumber = null;
 	}
@@ -35,11 +35,11 @@ public class Point {
 		this.name = name;
 	}
 
-	public Integer getOsm_id() {
+	public long getOsm_id() {
 		return osm_id;
 	}
 
-	public void setOsm_id(Integer osm_id) {
+	public void setOsm_id(long osm_id) {
 		this.osm_id = osm_id;
 	}
 

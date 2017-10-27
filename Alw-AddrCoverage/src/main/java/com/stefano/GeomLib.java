@@ -94,16 +94,47 @@ public class GeomLib {
 		return r;
 	}
 
-	public static ArrayList<Point> getPointsByStreetAddr(String streetAddr, java.sql.Connection conn, PreparedStatement s) {
+	public static ArrayList<Point> getPointsByStreetAddr(String streetAddr, java.sql.Connection conn)
+			throws OsmException {
 		/**
 		 * This method returns an ArrayList of all the points in the planet_osm_point
 		 * table, whose attribute addr:street is set to streetAddr
 		 **/
-		ArrayList<Point> result = new ArrayList<Point>();
-		
-		
-		
-		return result;
-	}
+		ArrayList<Point> results = new ArrayList<Point>();
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			ps = conn.prepareStatement(
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where p.\"addr:street\" = ?");
+
+			ps.setString(1, streetAddr);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4)));
+			}
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+
+		return results;
+	}
 }

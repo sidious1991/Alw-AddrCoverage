@@ -19,36 +19,20 @@ public class Test {
 
 			((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
 			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
-/*
-			Class.forName("org.postgresql.Driver");
-			String url = "jdbc:postgresql://localhost:5432/avezzano";
-			conn = DriverManager.getConnection(url, "postgres", "26042015");
-
-			((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
-			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
-
-			String streetName = "Via XX Settembre";
-			PreparedStatement s = conn.prepareStatement("select l.way from planet_osm_line l where l.name = ?");
-			s.setString(1, streetName);
-
-			ResultSet rs = s.executeQuery();
-			ResultSet r = null;
-
-			while (rs.next()) {
-
-				PGgeometry street = (PGgeometry) rs.getObject(1);
-				r = GeomLib.getNearestPoints(street, 15, streetName, conn, s);
-				while (r.next()) {
-					System.out.println(r.getString(1));
-					System.out.println(r.getString(4));
-				}
-			}
-
-			rs.close();
-			r.close();
-			s.close();*/
 			
-			String streetName = "Via XX Settembre";
+			String streetAddr = "Via Giuseppe Garibaldi";
+			
+			ArrayList<Point> result = GeomLib.getPointsByStreetAddr(streetAddr, conn);
+			
+			for (Point res : result) {
+				
+				System.out.println(res.getName());
+				System.out.println(res.getOsm_id());
+				System.out.println(res.getGeom());
+				System.out.println(res.getHousenumber());
+			}
+			
+			
 			conn.close();
 		}
 

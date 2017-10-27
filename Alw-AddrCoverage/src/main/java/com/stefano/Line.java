@@ -7,12 +7,12 @@ import org.postgis.*;
 public class Line {
 
 	private String name;
-	private Integer osm_id;
+	private long osm_id;
 	private PGgeometry geom;
 	private String housenumber;
 	private String street;
 
-	public Line(String name, Integer osm_id, PGgeometry geom, String housenumber, String street) {
+	public Line(String name, long osm_id, PGgeometry geom, String housenumber, String street) {
 		/** Builds a line entity **/
 		this.name = name;
 		this.osm_id = osm_id;
@@ -24,7 +24,7 @@ public class Line {
 	public Line() {
 		/** Default constructor **/
 		this.name = null;
-		this.osm_id = null;
+		this.osm_id = 0;
 		this.geom = null;
 		this.housenumber = null;
 		this.street = null;
@@ -38,11 +38,11 @@ public class Line {
 		this.name = name;
 	}
 
-	public Integer getOsm_id() {
+	public long getOsm_id() {
 		return osm_id;
 	}
 
-	public void setOsm_id(Integer osm_id) {
+	public void setOsm_id(long osm_id) {
 		this.osm_id = osm_id;
 	}
 
