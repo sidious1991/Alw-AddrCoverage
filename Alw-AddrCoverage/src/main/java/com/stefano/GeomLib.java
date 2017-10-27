@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.lang.*;
 import org.postgis.*;
+import com.stefano.osmexception.*;
 
 public class GeomLib {
 
@@ -93,29 +94,16 @@ public class GeomLib {
 		return r;
 	}
 
-	public static ResultSet getPointsByStreetAddr(String streetAddr, java.sql.Connection conn, PreparedStatement s) {
+	public static ArrayList<Point> getPointsByStreetAddr(String streetAddr, java.sql.Connection conn, PreparedStatement s) {
 		/**
-		 * This method returns a ResultSet of all the points in the planet_osm_point
+		 * This method returns an ArrayList of all the points in the planet_osm_point
 		 * table, whose attribute addr:street is set to streetAddr
 		 **/
-
-		ResultSet r = null;
-
-		try {
-
-			((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
-			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
-
-			s = conn.prepareStatement(
-					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where p.\"addr:street\" = ?");
-			s.setString(1, streetAddr);
-			r = s.executeQuery();
-		}
-
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return r;
+		ArrayList<Point> result = new ArrayList<Point>();
+		
+		
+		
+		return result;
 	}
+
 }
