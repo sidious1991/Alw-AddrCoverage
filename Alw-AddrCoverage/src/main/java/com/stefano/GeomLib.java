@@ -106,7 +106,7 @@ public class GeomLib {
 
 			s = conn.prepareStatement(
 					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where p.\"addr:street\" = ?");
-			s.setObject(1, streetAddr);
+			s.setString(1, streetAddr);
 			r = s.executeQuery();
 		}
 
