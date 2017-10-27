@@ -62,12 +62,13 @@ public class GeomLib {
 
 	}
 
-	public static ResultSet getNearestPoints(PGgeometry street, Integer max, java.sql.Connection conn,
-			PreparedStatement s) {
+	public static ResultSet getNearestPoints(PGgeometry street, Integer max, String streetName,
+			java.sql.Connection conn, PreparedStatement s) {
 		/**
 		 * This method returns a ResultSet of all the points in the planet_osm_point
 		 * table, whose geometric attribute (way) is at distance from street at most max
-		 * (recommended max = 15) (spatial reference 3857)
+		 * (recommended max = 15) (spatial reference 3857) and whose attribute
+		 * addr:street is null or set to streetName
 		 **/
 
 		ResultSet r = null;
@@ -78,9 +79,10 @@ public class GeomLib {
 			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
 
 			s = conn.prepareStatement(
-					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where ST_Distance(p.way, ?) <= ?");
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where (ST_Distance(p.way, ?) <= ?) and (p.\"addr:street\" = ? or p.\"addr:street\" is null)");
 			s.setObject(1, street);
 			s.setObject(2, max);
+			s.setString(3, streetName);
 			r = s.executeQuery();
 		}
 
@@ -96,7 +98,7 @@ public class GeomLib {
 		 * This method returns a ResultSet of all the points in the planet_osm_point
 		 * table, whose attribute addr:street is set to streetAddr
 		 **/
-			
+
 		ResultSet r = null;
 
 		try {
@@ -113,7 +115,7 @@ public class GeomLib {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return r;
 	}
 }
