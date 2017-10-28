@@ -1,4 +1,4 @@
-package com.stefano;
+package com.stefano.dataccess;
 
 import java.sql.*;
 import java.util.*;

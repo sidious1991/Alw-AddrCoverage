@@ -5,6 +5,7 @@ import java.util.*;
 import java.lang.*;
 import org.postgis.*;
 
+import com.stefano.dataccess.GeomLib;
 import com.stefano.geometries.Point;
 
 public class Test {
