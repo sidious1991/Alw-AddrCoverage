@@ -1,7 +1,5 @@
 package com.stefano.geometries;
 
-import java.util.*;
-import java.lang.*;
 import org.postgis.*;
 
 public class Line {

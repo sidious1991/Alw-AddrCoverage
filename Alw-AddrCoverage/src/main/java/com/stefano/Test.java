@@ -7,41 +7,31 @@ import org.postgis.*;
 
 import com.stefano.dataccess.GeomLib;
 import com.stefano.geometries.Point;
+import com.stefano.geometries.Line;
+import com.stefano.osmexception.*;
+import com.stefano.connection.*;
 
 public class Test {
 
 	public static void main(String args[]) {
 
-		java.sql.Connection conn;
+		String url = "jdbc:postgresql://localhost:5432/avezzano";
+		PostgresConnection pc = new PostgresConnection(url, "postgres", "26042015");
+		String streetAddr = "Via XX Settembre";
 
 		try {
-			
-			Class.forName("org.postgresql.Driver");
-			String url = "jdbc:postgresql://localhost:5432/avezzano";
-			conn = DriverManager.getConnection(url, "postgres", "26042015");
-
-			((org.postgresql.PGConnection) conn).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
-			((org.postgresql.PGConnection) conn).addDataType("box3d", Class.forName("org.postgis.PGbox3d"));
-			
-			String streetAddr = "Via Giuseppe Garibaldi";
-			
-			ArrayList<Point> result = GeomLib.getPointsByStreetAddr(streetAddr, conn);
-			
+			ArrayList<Point> result = GeomLib.getPointsByStreetAddr(streetAddr, pc.getConn());
 			for (Point res : result) {
-				
 				System.out.println(res.getName());
 				System.out.println(res.getOsm_id());
 				System.out.println(res.getGeom());
 				System.out.println(res.getHousenumber());
 			}
-			
-			
-			conn.close();
+		} catch (OsmException ex) {
+			ex.printStackTrace();
 		}
 
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		pc.closeConn();
 
 	}
 
