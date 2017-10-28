@@ -5,6 +5,8 @@ import java.util.*;
 import java.lang.*;
 import org.postgis.*;
 
+import com.stefano.geometries.Point;
+
 public class Test {
 
 	public static void main(String args[]) {

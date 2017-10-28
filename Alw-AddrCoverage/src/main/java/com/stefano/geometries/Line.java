@@ -1,4 +1,4 @@
-package com.stefano;
+package com.stefano.geometries;
 
 import java.util.*;
 import java.lang.*;

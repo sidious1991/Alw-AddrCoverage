@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.*;
 import java.lang.*;
 import org.postgis.*;
+
+import com.stefano.geometries.Point;
 import com.stefano.osmexception.*;
 
 public class GeomLib {
