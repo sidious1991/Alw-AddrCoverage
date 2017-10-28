@@ -7,14 +7,16 @@ public class Point {
 	private String name;
 	private long osm_id;
 	private PGgeometry geom;
-	private String housenumber;
+	private String housenumber;//addr:housenumber
+	private String street;//addr:street
 
-	public Point(String name, long osm_id, PGgeometry geom, String housenumber) {
+	public Point(String name, long osm_id, PGgeometry geom, String housenumber, String street) {
 		/** Builds a point entity **/
 		this.name = name;
 		this.osm_id = osm_id;
 		this.geom = geom;
 		this.housenumber = housenumber;
+		this.street = street;
 	}
 	
 	public Point() {
@@ -23,6 +25,7 @@ public class Point {
 		this.osm_id = 0;
 		this.geom = null;
 		this.housenumber = null;
+		this.street = null;
 	}
 
 	public String getName() {
@@ -57,4 +60,12 @@ public class Point {
 		this.housenumber = housenumber;
 	}
 
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+	
 }

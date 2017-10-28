@@ -9,13 +9,6 @@ public class PostgresConnection {
 	private String pass;
 	private java.sql.Connection conn;
 
-	public PostgresConnection() {
-		this.url = null;
-		this.user = null;
-		this.pass = null;
-		this.conn = null;
-	}
-
 	public PostgresConnection(String url, String user, String pass) {
 		this.url = url;
 		this.user = user;

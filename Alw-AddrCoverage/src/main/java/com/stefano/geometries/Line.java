@@ -7,16 +7,16 @@ public class Line {
 	private String name;
 	private long osm_id;
 	private PGgeometry geom;
-	private String housenumber;
-	private String street;
+	private String housenumber;// addr:housenumber
+	private String street;// addr:street
 
 	public Line(String name, long osm_id, PGgeometry geom, String housenumber, String street) {
 		/** Builds a line entity **/
 		this.name = name;
 		this.osm_id = osm_id;
 		this.geom = geom;
-		this.housenumber = housenumber;
-		this.street = street;
+		this.housenumber = housenumber; 
+		this.street = street; 
 	}
 	
 	public Line() {

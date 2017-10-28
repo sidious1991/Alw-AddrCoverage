@@ -71,13 +71,14 @@ public class GeomLib {
 		try {
 
 			ps = conn.prepareStatement(
-					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where ST_Touches(p.way, ?) = true");
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_point p where ST_Touches(p.way, ?) = true");
 
 			ps.setObject(1, street);
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4)));
+				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
 			}
 
 		} catch (SQLException ex) {
@@ -118,7 +119,7 @@ public class GeomLib {
 		try {
 
 			ps = conn.prepareStatement(
-					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where (ST_Distance(p.way, ?) <= ?) and (p.\"addr:street\" = ? or p.\"addr:street\" is null)");
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_point p where (ST_Distance(p.way, ?) <= ?) and (p.\"addr:street\" = ? or p.\"addr:street\" is null)");
 
 			ps.setObject(1, street);
 			ps.setObject(2, max);
@@ -126,7 +127,8 @@ public class GeomLib {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4)));
+				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
 			}
 
 		} catch (SQLException ex) {
@@ -164,13 +166,14 @@ public class GeomLib {
 		try {
 
 			ps = conn.prepareStatement(
-					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\" from planet_osm_point p where p.\"addr:street\" = ?");
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_point p where p.\"addr:street\" = ?");
 
 			ps.setString(1, streetAddr);
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4)));
+				results.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
 			}
 
 		} catch (SQLException ex) {
@@ -193,4 +196,51 @@ public class GeomLib {
 
 		return results;
 	}
+
+	public static ArrayList<Line> getMyOwnLine(Point p, java.sql.Connection conn) throws OsmException {
+		/**
+		 * This method returns in an ArrayList the nearest Line (and so street) from
+		 * Point p
+		 **/
+
+		ArrayList<Line> results = new ArrayList<Line>();
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			ps = conn.prepareStatement(
+					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_point p,planet_osm_line l where p.osm_id = ? order by ST_Distance(p.way,l.way) limit 1");
+
+			ps.setLong(1, p.getOsm_id());
+			;
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				results.add(new Line(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
+			}
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+
+		return results;
+	}
+
 }
