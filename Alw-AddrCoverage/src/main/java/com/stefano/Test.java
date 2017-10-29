@@ -34,10 +34,10 @@ public class Test {
 			ex.printStackTrace();
 		}
 
-		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
+		System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 
 		try {
-			result2 = GeomLib.getMyOwnLine(result.get(0), pc.getConn());
+			result2 = GeomLib.getMyNearestLine(result.get(0), pc.getConn());
 			for (Line res : result2) {
 				System.out.println(res.getName());
 				System.out.println(res.getOsm_id());

@@ -197,7 +197,7 @@ public class GeomLib {
 		return results;
 	}
 
-	public static ArrayList<Line> getMyOwnLine(Point p, java.sql.Connection conn) throws OsmException {
+	public static ArrayList<Line> getMyNearestLine(Point p, java.sql.Connection conn) throws OsmException {
 		/**
 		 * This method returns in an ArrayList the nearest Line (and so street) from
 		 * Point p
@@ -214,7 +214,53 @@ public class GeomLib {
 					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_point p,planet_osm_line l where p.osm_id = ? order by ST_Distance(p.way,l.way) limit 1");
 
 			ps.setLong(1, p.getOsm_id());
-			;
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				results.add(new Line(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
+			}
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+
+		return results;
+	}
+
+	public static ArrayList<Line> getMyOwnLine(Point p, java.sql.Connection conn) throws OsmException {
+		/**
+		 * This method returns in an ArrayList the own Line of Point p (from
+		 * p."addr:street") Recommendation: use only if p."addr:street" is not null,
+		 * else use getMyNearestLine (above)
+		 **/
+
+		ArrayList<Line> results = new ArrayList<Line>();
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			ps = conn.prepareStatement(
+					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_point p,planet_osm_line l where (p.osm_id = ? and l.name = ?) order by ST_Distance(p.way,l.way) limit 1");
+
+			ps.setLong(1, p.getOsm_id());
+			ps.setString(2, p.getStreet());
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
