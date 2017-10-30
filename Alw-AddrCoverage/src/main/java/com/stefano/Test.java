@@ -10,6 +10,7 @@ import com.stefano.geometries.Point;
 import com.stefano.geometries.Line;
 import com.stefano.osmexception.*;
 import com.stefano.connection.*;
+import com.stefano.coverage.Coverage;
 
 public class Test {
 
@@ -19,7 +20,7 @@ public class Test {
 		PostgresConnection pc = new PostgresConnection(url, "postgres", "26042015");
 		String streetAddr = "Via XX Settembre";
 		ArrayList<Point> result = new ArrayList<Point>();
-		ArrayList<Line> result2 = new ArrayList<Line>();
+		Map<Long, Coverage> lines = new HashMap<Long, Coverage>();
 
 		try {
 			result = GeomLib.getPointsByStreetAddr(streetAddr, pc.getConn());
@@ -37,13 +38,13 @@ public class Test {
 		System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 
 		try {
-			result2 = GeomLib.getMyNearestLine(result.get(0), pc.getConn());
-			for (Line res : result2) {
-				System.out.println(res.getName());
-				System.out.println(res.getOsm_id());
-				System.out.println(res.getGeom());
-				System.out.println(res.getHousenumber());
-				System.out.println(res.getStreet());
+			lines = GeomLib.getAllLines(pc.getConn());
+
+			for (Map.Entry<Long, Coverage> entry : lines.entrySet()) {
+				Long key = entry.getKey();
+				Coverage value = entry.getValue();
+				System.out.println("key: " + key);
+				System.out.println("value: " + value.getName());
 			}
 		} catch (OsmException ex) {
 			ex.printStackTrace();

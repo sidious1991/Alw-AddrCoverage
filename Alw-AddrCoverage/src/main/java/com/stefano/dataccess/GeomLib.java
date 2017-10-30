@@ -6,6 +6,7 @@ import java.lang.*;
 import org.postgis.*;
 
 import com.stefano.geometries.Point;
+import com.stefano.coverage.Coverage;
 import com.stefano.geometries.Line;
 import com.stefano.osmexception.*;
 
@@ -289,4 +290,106 @@ public class GeomLib {
 		return results;
 	}
 
+	public static ArrayList<Line> PointLineName(Point p, java.sql.Connection conn) throws OsmException {
+		/** This method returns the nearest or the own Line **/
+
+		ArrayList<Line> result = null;
+
+		if (p.getStreet() == null) {
+			result = getMyNearestLine(p, conn);
+		}
+
+		else {
+			result = getMyOwnLine(p, conn);
+		}
+
+		return result;
+	}
+
+	public static ArrayList<Point> getAllPoints(java.sql.Connection conn) throws OsmException {
+		/** This method returns all the points in the db **/
+
+		ArrayList<Point> points = new ArrayList<Point>();
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			ps = conn.prepareStatement(
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_point p");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				points.add(new Point(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
+			}
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+		return points;
+	}
+
+	public static Map<Long, Coverage> getAllLines(java.sql.Connection conn) throws OsmException {
+		/** This method returns all the lines in the db **/
+
+		Map<Long, Coverage> lines = new HashMap<Long, Coverage>();
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			ps = conn.prepareStatement("select l.name,l.osm_id from planet_osm_line l where l.name is not null");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				lines.put(rs.getLong(2), new Coverage(rs.getString(1)));
+			}
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+
+		return lines;
+	}
 }
+
+/**
+ * Line = SEGMENTO Street = INSIEME DI LINE
+ * 
+ * ArrayList<Point> -- Map<osm_id (della linea), Coverage()>
+ * 
+ * 
+ */
