@@ -212,9 +212,9 @@ public class GeomLib {
 		try {
 
 			ps = conn.prepareStatement(
-					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_point p,planet_osm_line l where p.osm_id = ? order by ST_Distance(p.way,l.way) limit 1");
+					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_line l order by ST_Distance(?,l.way) limit 1");
 
-			ps.setLong(1, p.getOsm_id());
+			ps.setObject(1, p.getGeom());
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -258,10 +258,10 @@ public class GeomLib {
 		try {
 
 			ps = conn.prepareStatement(
-					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_point p,planet_osm_line l where (p.osm_id = ? and l.name = ?) order by ST_Distance(p.way,l.way) limit 1");
+					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_line l where l.name = ? order by ST_Distance(?,l.way) limit 1");
 
-			ps.setLong(1, p.getOsm_id());
-			ps.setString(2, p.getStreet());
+			ps.setString(1, p.getStreet());
+			ps.setObject(2, p.getGeom());
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -294,9 +294,8 @@ public class GeomLib {
 		/** This method returns the nearest or the own Line **/
 
 		ArrayList<Line> result = null;
-		System.out.println("HERE");
-		
-		if (p.getStreet() == null) {	
+
+		if (p.getStreet() == null) {
 			result = getMyNearestLine(p, conn);
 		}
 
@@ -347,6 +346,7 @@ public class GeomLib {
 		return points;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Map<Long, Coverage> getAllLines(java.sql.Connection conn) throws OsmException {
 		/** This method returns all the lines in the db **/
 
@@ -362,7 +362,7 @@ public class GeomLib {
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
-				lines.put(rs.getLong(2), new Coverage(rs.getString(1)));
+				lines.put(new Long(rs.getLong(2)), new Coverage(rs.getString(1)));
 			}
 
 		} catch (SQLException ex) {

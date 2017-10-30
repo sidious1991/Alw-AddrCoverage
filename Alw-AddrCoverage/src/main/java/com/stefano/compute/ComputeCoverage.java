@@ -6,6 +6,7 @@ import java.util.Map;
 import com.stefano.connection.PostgresConnection;
 import com.stefano.coverage.Coverage;
 import com.stefano.dataccess.GeomLib;
+import com.stefano.geometries.Line;
 import com.stefano.geometries.Point;
 import com.stefano.osmexception.OsmException;
 
@@ -36,30 +37,36 @@ public class ComputeCoverage {
 		this.lines = lines;
 	}
 
-	public void compute(PostgresConnection pg) throws OsmException {
+	public void compute(java.sql.Connection conn) throws OsmException {
 
 		/** Compute, for all points in db, the lines coverage (for all lines) **/
 
 		Long line_osm_id = null;
 		Coverage cv = null;
+		ArrayList<Line> l = null;
 
 		for (Point p : this.points) {
 
-			line_osm_id = (GeomLib.PointLineName(p, pg.getConn()).get(0)).getOsm_id();
+			l = GeomLib.PointLineName(p, conn);
 
-			if (this.lines.containsKey(line_osm_id)) {
-				// Denom ++
-				cv = this.lines.get(line_osm_id);
-				cv.increaseLineElements();
+			if (l.size() > 0) {
 
-				if (p.getHousenumber() != null) {
-					// Numer ++
-					cv.increaseHouseNumber();
+				line_osm_id = (l.get(0)).getOsm_id();
+
+				if (this.lines.containsKey(line_osm_id)) {
+					// Denom ++
+					cv = this.lines.get(line_osm_id);
+					cv.increaseLineElements();
+
+					if (p.getHousenumber() != null) {
+						// Numer ++
+						cv.increaseHouseNumber();
+					}
+
+					this.lines.put(line_osm_id, cv);
 				}
-
-				this.lines.put(line_osm_id, cv);
 			}
 		}
-
 	}
+
 }
