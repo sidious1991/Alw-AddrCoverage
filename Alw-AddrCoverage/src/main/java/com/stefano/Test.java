@@ -9,6 +9,7 @@ import com.stefano.dataccess.GeomLib;
 import com.stefano.geometries.Point;
 import com.stefano.geometries.Line;
 import com.stefano.osmexception.*;
+import com.stefano.compute.ComputeCoverage;
 import com.stefano.connection.*;
 import com.stefano.coverage.Coverage;
 
@@ -20,6 +21,7 @@ public class Test {
 		PostgresConnection pc = new PostgresConnection(url, "postgres", "26042015");
 		String streetAddr = "Via XX Settembre";
 		ArrayList<Point> result = new ArrayList<Point>();
+		ArrayList<Point> point = new ArrayList<Point>();
 		Map<Long, Coverage> lines = new HashMap<Long, Coverage>();
 
 		try {
@@ -38,13 +40,15 @@ public class Test {
 		System.out.println("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 
 		try {
-			lines = GeomLib.getAllLines(pc.getConn());
-
-			for (Map.Entry<Long, Coverage> entry : lines.entrySet()) {
+			ComputeCoverage cp = new ComputeCoverage(GeomLib.getAllPoints(pc.getConn()),GeomLib.getAllLines(pc.getConn()));
+			cp.compute(pc);
+			
+			for (Map.Entry<Long, Coverage> entry : cp.getLines().entrySet()) {
 				Long key = entry.getKey();
 				Coverage value = entry.getValue();
 				System.out.println("key: " + key);
 				System.out.println("value: " + value.getName());
+				System.out.println("value: " + value.getCoverage());
 			}
 		} catch (OsmException ex) {
 			ex.printStackTrace();

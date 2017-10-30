@@ -294,8 +294,9 @@ public class GeomLib {
 		/** This method returns the nearest or the own Line **/
 
 		ArrayList<Line> result = null;
-
-		if (p.getStreet() == null) {
+		System.out.println("HERE");
+		
+		if (p.getStreet() == null) {	
 			result = getMyNearestLine(p, conn);
 		}
 
