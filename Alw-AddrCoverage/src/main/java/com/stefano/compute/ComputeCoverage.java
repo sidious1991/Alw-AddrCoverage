@@ -54,12 +54,12 @@ public class ComputeCoverage {
 				line_osm_id = (l.get(0)).getOsm_id();
 
 				if (this.lines.containsKey(line_osm_id)) {
-					// Denom ++
+					// Denominator ++
 					cv = this.lines.get(line_osm_id);
 					cv.increaseLineElements();
 
 					if (p.getHousenumber() != null) {
-						// Numer ++
+						// Numerator ++
 						cv.increaseHouseNumber();
 					}
 

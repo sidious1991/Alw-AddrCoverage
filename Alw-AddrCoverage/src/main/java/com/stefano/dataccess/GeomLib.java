@@ -388,7 +388,7 @@ public class GeomLib {
 }
 
 /**
- * Line = SEGMENTO Street = INSIEME DI LINE
+ * Line = SEGMENTO -- Street = INSIEME DI LINE
  * 
  * ArrayList<Point> -- Map<osm_id (della linea), Coverage()>
  * 
