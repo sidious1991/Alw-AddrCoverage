@@ -30,8 +30,8 @@ public class Test {
 				Long key = entry.getKey();
 				Coverage value = entry.getValue();
 				System.out.println("OSM_ID: " + key + " NAME: " + value.getName() + " TOT COVERAGE: "
-						+ value.getCoverage() + " POINT COVERAGE: " + value.getPointCoverage() + " POLYGON: "
-						+ value.getPolygonCoverage());
+						+ value.getCoverage() + " POINT COVERAGE: " + value.getPointCoverage() + " POLYGON COVERAGE: "
+						+ value.getPolygonCoverage() + " TOT NUM ELE: " + value.getLinelements());
 			}
 		} catch (OsmException ex) {
 			ex.printStackTrace();
@@ -46,6 +46,10 @@ public class Test {
  * FETCH DEI POLIGONI SE HANNO SETTATI: BUILDING = YES OR ADDR:POSTCODE is not
  * null OR ADDR:STREET is not null OR DENOMINATION = 'catholic'
  * 
+ * 
+ * POLYGON NEW : NAME - OSM_ID - GEOM - HOUSENUMBER - STREET 
+ * POINT NEW : NAME - OSM_ID - GEOM - HOUSENUMBER - STREET 
+ * LINE UPDATE : NAME - OSM_ID - GEOM - HOUSENUMBER - COVERAGE - COVERAGE POINT - COVERAGE POLYGON - COVERAGE TOT DENOMINATOR 
  * 
  * 
  * 

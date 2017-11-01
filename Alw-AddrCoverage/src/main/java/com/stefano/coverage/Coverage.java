@@ -6,11 +6,11 @@ public class Coverage {
 	private double housenumbers; // number of elements in this line with housenumber not null
 	private double linelements; // number of elements in this line
 
-	private double pointhousenumbers; // number of elements in this line with housenumber not null
-	private double pointlinelements; // number of elements in this line
+	private double pointhousenumbers; // number of points in this line with housenumber not null
+	private double pointlinelements; // number of points in this line
 
-	private double polygonhousenumbers; // number of elements in this line with housenumber not null
-	private double polygonlinelements; // number of elements in this line
+	private double polygonhousenumbers; // number of polygons in this line with housenumber not null
+	private double polygonlinelements; // number of polygons in this line
 
 	private String name; // Street name (all lines in this street have the same street name)
 

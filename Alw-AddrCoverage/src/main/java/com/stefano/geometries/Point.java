@@ -7,8 +7,8 @@ public class Point {
 	private String name;
 	private long osm_id;
 	private PGgeometry geom;
-	private String housenumber;//addr:housenumber
-	private String street;//addr:street
+	private String housenumber;// addr:housenumber
+	private String street;// addr:street
 
 	public Point(String name, long osm_id, PGgeometry geom, String housenumber, String street) {
 		/** Builds a point entity **/
@@ -18,7 +18,7 @@ public class Point {
 		this.housenumber = housenumber;
 		this.street = street;
 	}
-	
+
 	public Point() {
 		/** Default constructor **/
 		this.name = null;
@@ -67,5 +67,5 @@ public class Point {
 	public void setStreet(String street) {
 		this.street = street;
 	}
-	
+
 }
