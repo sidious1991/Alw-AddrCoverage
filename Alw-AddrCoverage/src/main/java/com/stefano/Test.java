@@ -23,14 +23,15 @@ public class Test {
 		try {
 
 			ComputeCoverage c = new ComputeCoverage(GeomLib.getAllPoints(pc.getConn()),
-					GeomLib.getAllLines(pc.getConn()));
+					GeomLib.getAllPolygons(pc.getConn()), GeomLib.getAllLines(pc.getConn()));
 			c.compute(pc.getConn());
 
 			for (Map.Entry<Long, Coverage> entry : c.getLines().entrySet()) {
 				Long key = entry.getKey();
 				Coverage value = entry.getValue();
-				System.out
-						.println("OSM_ID: " + key + " NAME: " + value.getName() + " COVERAGE: " + value.getCoverage());
+				System.out.println("OSM_ID: " + key + " NAME: " + value.getName() + " TOT COVERAGE: "
+						+ value.getCoverage() + " POINT COVERAGE: " + value.getPointCoverage() + " POLYGON: "
+						+ value.getPolygonCoverage());
 			}
 		} catch (OsmException ex) {
 			ex.printStackTrace();
@@ -41,12 +42,11 @@ public class Test {
 
 }
 
-/** 
- * FETCH DEI POLIGONI SE HANNO SETTATI:
- * BUILDING = YES OR ADDR:POSTCODE is not null OR ADDR:STREET is not null OR DENOMINATION = 'catholic'
+/**
+ * FETCH DEI POLIGONI SE HANNO SETTATI: BUILDING = YES OR ADDR:POSTCODE is not
+ * null OR ADDR:STREET is not null OR DENOMINATION = 'catholic'
  * 
  * 
  * 
  * 
- * **/
-
+ **/

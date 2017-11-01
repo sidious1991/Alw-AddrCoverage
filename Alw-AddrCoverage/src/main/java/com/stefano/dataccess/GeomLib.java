@@ -2,12 +2,12 @@ package com.stefano.dataccess;
 
 import java.sql.*;
 import java.util.*;
-import java.lang.*;
 import org.postgis.*;
 
 import com.stefano.geometries.Point;
-import com.stefano.coverage.Coverage;
 import com.stefano.geometries.Line;
+import com.stefano.geometries.Polygon;
+import com.stefano.coverage.Coverage;
 import com.stefano.osmexception.*;
 
 public class GeomLib {
@@ -198,10 +198,10 @@ public class GeomLib {
 		return results;
 	}
 
-	public static ArrayList<Line> getMyNearestLine(Point p, java.sql.Connection conn) throws OsmException {
+	public static ArrayList<Line> getMyNearestLine(PGgeometry geom, java.sql.Connection conn) throws OsmException {
 		/**
 		 * This method returns in an ArrayList the nearest Line (and so street) from
-		 * Point p
+		 * geom
 		 **/
 
 		ArrayList<Line> results = new ArrayList<Line>();
@@ -214,7 +214,7 @@ public class GeomLib {
 			ps = conn.prepareStatement(
 					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_line l order by ST_Distance(?,l.way) limit 1");
 
-			ps.setObject(1, p.getGeom());
+			ps.setObject(1, geom);
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -243,11 +243,12 @@ public class GeomLib {
 		return results;
 	}
 
-	public static ArrayList<Line> getMyOwnLine(Point p, java.sql.Connection conn) throws OsmException {
+	public static ArrayList<Line> getMyOwnLine(PGgeometry geom, String street, java.sql.Connection conn)
+			throws OsmException {
 		/**
-		 * This method returns in an ArrayList the own Line of Point p (from
-		 * p."addr:street") Recommendation: use only if p."addr:street" is not null,
-		 * else use getMyNearestLine (above)
+		 * This method returns in an ArrayList the own Line of a geom (from
+		 * "addr:street") Recommendation: use only if "addr:street" is not null, else
+		 * use getMyNearestLine (above)
 		 **/
 
 		ArrayList<Line> results = new ArrayList<Line>();
@@ -260,8 +261,8 @@ public class GeomLib {
 			ps = conn.prepareStatement(
 					"select l.name,l.osm_id,l.way,l.\"addr:housenumber\",l.\"addr:street\" from planet_osm_line l where l.name = ? order by ST_Distance(?,l.way) limit 1");
 
-			ps.setString(1, p.getStreet());
-			ps.setObject(2, p.getGeom());
+			ps.setString(1, street);
+			ps.setObject(2, geom);
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -290,17 +291,18 @@ public class GeomLib {
 		return results;
 	}
 
-	public static ArrayList<Line> PointLineName(Point p, java.sql.Connection conn) throws OsmException {
+	public static ArrayList<Line> getGeomLine(PGgeometry geom, String street, java.sql.Connection conn)
+			throws OsmException {
 		/** This method returns the nearest or the own Line **/
 
 		ArrayList<Line> result = null;
 
-		if (p.getStreet() == null) {
-			result = getMyNearestLine(p, conn);
+		if (street == null) {
+			result = getMyNearestLine(geom, conn);
 		}
 
 		else {
-			result = getMyOwnLine(p, conn);
+			result = getMyOwnLine(geom, street, conn);
 		}
 
 		return result;
@@ -384,6 +386,46 @@ public class GeomLib {
 		}
 
 		return lines;
+	}
+
+	public static ArrayList<Polygon> getAllPolygons(java.sql.Connection conn) throws OsmException {
+		/** This method returns all the polygon (with soma attribute) in the db **/
+
+		ArrayList<Polygon> polygons = new ArrayList<Polygon>();
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			ps = conn.prepareStatement(
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_polygon p where (p.building is not null) or (p.sport is not null) or (p.office is not null) or (p.shop is not null)");
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				polygons.add(new Polygon(rs.getString(1), rs.getLong(2), (PGgeometry) rs.getObject(3), rs.getString(4),
+						rs.getString(5)));
+			}
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				rs.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+		return polygons;
 	}
 }
 
