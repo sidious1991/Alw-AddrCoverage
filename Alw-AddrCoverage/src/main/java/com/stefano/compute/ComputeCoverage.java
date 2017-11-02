@@ -67,6 +67,7 @@ public class ComputeCoverage {
 				if (this.lines.containsKey(line_osm_id)) {
 					// Assign the street to the point
 					p.setStreet(l.get(0).getName());
+					GeomLib.writePoint(conn, l.get(0).getName(), p.getOsm_id());
 					// Denominator ++
 					cv = this.lines.get(line_osm_id);
 					cv.increaseLineElements();
@@ -94,6 +95,7 @@ public class ComputeCoverage {
 				if (this.lines.containsKey(line_osm_id)) {
 					// Assign the street to the polygon
 					p.setStreet(l.get(0).getName());
+					GeomLib.writePolygon(conn, l.get(0).getName(), p.getOsm_id());
 					// Denominator ++
 					cv = this.lines.get(line_osm_id);
 					cv.increaseLineElements();

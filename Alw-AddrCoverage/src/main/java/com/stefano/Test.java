@@ -29,6 +29,9 @@ public class Test {
 			for (Map.Entry<Long, Coverage> entry : c.getLines().entrySet()) {
 				Long key = entry.getKey();
 				Coverage value = entry.getValue();
+
+				GeomLib.writeLine(pc.getConn(), value.getLinelements(), value.getCoverage(), key);
+
 				System.out.println("OSM_ID: " + key + " NAME: " + value.getName() + " TOT COVERAGE: "
 						+ value.getCoverage() + " POINT COVERAGE: " + value.getPointCoverage() + " POLYGON COVERAGE: "
 						+ value.getPolygonCoverage() + " TOT NUM ELE: " + value.getLinelements());
@@ -47,9 +50,15 @@ public class Test {
  * null OR ADDR:STREET is not null OR DENOMINATION = 'catholic'
  * 
  * 
- * POLYGON NEW : NAME - OSM_ID - GEOM - HOUSENUMBER - STREET 
- * POINT NEW : NAME - OSM_ID - GEOM - HOUSENUMBER - STREET 
- * LINE UPDATE : NAME - OSM_ID - GEOM - HOUSENUMBER - COVERAGE - COVERAGE POINT - COVERAGE POLYGON - COVERAGE TOT DENOMINATOR 
+ * POLYGON NEW : NAME - OSM_ID - GEOM - HOUSENUMBER - STREET POINT NEW : NAME -
+ * OSM_ID - GEOM - HOUSENUMBER - STREET LINE UPDATE : NAME - OSM_ID - GEOM -
+ * HOUSENUMBER - COVERAGE - COVERAGE POINT - COVERAGE POLYGON - COVERAGE TOT
+ * DENOMINATOR
+ * 
+ * POSSIBILITA' (NON IMPANICHIAMOCI):
+ * 
+ * ALCUNI PUNTI E POLIGONI SONO CON STRADA NON AGGIORNATA IN QUANTO LA LINEA PIU' VICINA NON CONTIENE L'ATRIBUTO NAME (NULL) E
+ *  PERTANTO VIENE SCARTATA.
  * 
  * 
  * 

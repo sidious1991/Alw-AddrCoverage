@@ -389,7 +389,7 @@ public class GeomLib {
 	}
 
 	public static ArrayList<Polygon> getAllPolygons(java.sql.Connection conn) throws OsmException {
-		/** This method returns all the polygon (with soma attribute) in the db **/
+		/** This method returns all the polygon (with some attribute) in the db **/
 
 		ArrayList<Polygon> polygons = new ArrayList<Polygon>();
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
@@ -426,6 +426,95 @@ public class GeomLib {
 			}
 		}
 		return polygons;
+	}
+
+	public static void writeLine(java.sql.Connection conn, Double numelement, Double coverage, Long osm_id)
+			throws OsmException {
+
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		/*
+		 * si potrebbe creare una tabella nuova e prendere i dati da quella di partenza
+		 * per poi aggiornare i campi INSERT INTO planet_line SELECT * FROM
+		 * planet_osm_line l WHERE l.name is not null;
+		 */
+
+		PreparedStatement ps = null;
+
+		try {
+
+			ps = conn.prepareStatement("update planet_osm_line set numelement=?, coverage=? where osm_id =?");
+			ps.setDouble(1, numelement);
+			ps.setDouble(2, coverage);
+			ps.setLong(3, osm_id);
+			ps.executeUpdate();
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+	}
+
+	public static void writePoint(java.sql.Connection conn, String street, Long osm_id) throws OsmException {
+
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+
+		try {
+
+			ps = conn.prepareStatement("update planet_osm_point set \"addr:street\"=? where osm_id =?");
+			ps.setString(1, street);
+			ps.setLong(2, osm_id);
+			ps.executeUpdate();
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
+	}
+
+	public static void writePolygon(java.sql.Connection conn, String street, Long osm_id) throws OsmException {
+
+		ArrayList<Exception> exceptions = new ArrayList<Exception>();
+
+		PreparedStatement ps = null;
+
+		try {
+
+			ps = conn.prepareStatement("update planet_osm_polygon set \"addr:street\"=? where osm_id =?");
+			ps.setString(1, street);
+			ps.setLong(2, osm_id);
+			ps.executeUpdate();
+
+		} catch (SQLException ex) {
+			exceptions.add(ex);
+		} finally {
+			try {
+				ps.close();
+			} catch (SQLException ex) {
+				exceptions.add(ex);
+			}
+			if (exceptions.size() != 0) {
+				throw new OsmException(exceptions);
+			}
+		}
 	}
 }
 
