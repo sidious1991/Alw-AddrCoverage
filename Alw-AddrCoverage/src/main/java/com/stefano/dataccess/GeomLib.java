@@ -319,7 +319,7 @@ public class GeomLib {
 		try {
 
 			ps = conn.prepareStatement(
-					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_point p");
+					"select p.name,p.osm_id,p.way,p.\"addr:housenumber\",p.\"addr:street\" from planet_osm_point p where p.name is not null");
 
 			rs = ps.executeQuery();
 
